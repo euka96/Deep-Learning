@@ -45,8 +45,8 @@ def detective(folder_name) :
             y = int(obj['y'])
             w = int(obj['width'])
             h = int(obj['height'])
-            draw.text((x + 20, y + 20), name, font = ImageFont.truetype('AppleGothic', 20), fill = (255, 0, 0))
-            draw.rectangle(((x, y), (x + w, y + w)), outline = (255, 0, 0), width = 2)
+            draw.text((x + 20, y + 20), name, font = ImageFont.truetype('AppleGothic', 50), fill = (255, 0, 0))
+            draw.rectangle(((x, y), (x + w, y + w)), outline = (255, 0, 0), width = 10)
         
         plt.figure(figsize = (12, 8))
         plt.imshow(image)
