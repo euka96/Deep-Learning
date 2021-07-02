@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 openApiURL = 'http://aiopen.etri.re.kr:8000/ObjectDetect'
 http = urllib3.PoolManager()
 
-def detective(folder_name) :
-    for img_file in glob(f'{folder_name}/*') :
+def detective(folder_path) :
+    for img_file in glob(f'{folder_path}/*') :
         _, img_type = os.path.splitext(img_file)
         img_type = 'jpg' if img_type == '.jfif' else img_type[1:]
 
@@ -34,20 +34,31 @@ def detective(folder_name) :
             )
 
         result = json.loads(response.data)
-        obj_list = result['return_object']['data']
 
-        image = Image.open(img_file)
-        draw = ImageDraw.Draw(image)
+        try :
+            obj_list = result['return_object']['data']
+
+            image = Image.open(img_file)
+            draw = ImageDraw.Draw(image)
+            
+            for obj in obj_list :
+                name = obj['class']
+                x = int(obj['x'])
+                y = int(obj['y'])
+                w = int(obj['width'])
+                h = int(obj['height'])
+                draw.text((x + 20, y + 20), name, font = ImageFont.truetype('AppleGothic', 50), fill = (255, 0, 0))
+                draw.rectangle(((x, y), (x + w, y + w)), outline = (255, 0, 0), width = 10)
         
-        for obj in obj_list :
-            name = obj['class']
-            x = int(obj['x'])
-            y = int(obj['y'])
-            w = int(obj['width'])
-            h = int(obj['height'])
-            draw.text((x + 20, y + 20), name, font = ImageFont.truetype('AppleGothic', 50), fill = (255, 0, 0))
-            draw.rectangle(((x, y), (x + w, y + w)), outline = (255, 0, 0), width = 10)
-        
-        plt.figure(figsize = (12, 8))
-        plt.imshow(image)
-        print(plt.show())
+            plt.figure(figsize = (12, 8))
+            plt.imshow(image)
+            print(plt.show())
+
+        except :
+            image = Image.open(img_file)
+            plt.figure(figsize = (12, 8))
+            plt.imshow(image)
+            print(plt.show())
+            error = result['reason']
+            print(f'Error : {error}')
+            pass
